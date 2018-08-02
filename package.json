@@ -1,0 +1,30 @@
+{
+  "name": "godfather",
+  "version": "1.0.0",
+  "description": "Node.js REST API for movie database",
+  "main": "server.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WestedCrean/godfather.git"
+  },
+  "keywords": [
+    "movies",
+    "mongo",
+    "node",
+    "express",
+    "netguru"
+  ],
+  "author": "Wiktor Flis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WestedCrean/godfather/issues"
+  },
+  "homepage": "https://github.com/WestedCrean/godfather#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "eslint": "^5.2.0",
+    "express": "^4.16.3",
+    "mongodb": "^3.1.1"
+  }
+}
