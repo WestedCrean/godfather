@@ -3,6 +3,8 @@ const commentSchema = require('./validation/comments/schema.js');
 const Joi = require('joi');
 const request = require('request-promise');
 
+const apiaddress = process.env.OMDB_APIADDRESS;
+const apikey = process.env.OMDB_APIKEYSTRING
 module.exports = function(app, db) {
     
     // fetches more info for a given movie, and saves it into app database
@@ -24,8 +26,8 @@ module.exports = function(app, db) {
             .then(moviestring => {
                 moviestring = moviestring.replace(/\s/g, '+');
                 //omdb api call
-                console.log("apiaddr : " + process.env.OMDB_APIADDRESS);
-                var url = process.env.OMDB_APIADDRESS + '?t=' + moviestring + process.env.OMDB_APIKEYSTRING;
+                console.log("apiaddr : " + apiaddress);
+                var url = apiaddress + '?t=' + moviestring + apikey;
                 console.log("GET " + url);
                 request(url).then( (data) => {
                         var movie = {
