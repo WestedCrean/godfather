@@ -7,6 +7,9 @@ const apiaddress = process.env.OMDB_APIADDRESS;
 const apikey = process.env.OMDB_APIKEYSTRING
 module.exports = function(app, db) {
     
+    app.get('/', (req, res) => {
+        res.status(202).send("Welcome to my API!");
+    });
     // fetches more info for a given movie, and saves it into app database
     app.post('/movies', (req, res) => {
         const dbURL = process.env.MONGODB_URI;
@@ -88,4 +91,5 @@ module.exports = function(app, db) {
     app.get('/comments', (req, res) => {
 
     });
+
 };
