@@ -103,7 +103,7 @@ module.exports = function(app, db) {
                 _id: commentRecord.title.toLowerCase()
             }).then( movie => {
                 if(movie){
-                    
+
                     //add comment to db
                     db.collection("comments").insert(commentRecord
                         , (err, result) => {
@@ -138,10 +138,10 @@ module.exports = function(app, db) {
     *   GET /comments - get comments with filtering
     */ 
     app.get('/comments/:movie', (req, res) => {
-        console.log("comments with filtering!");
         let obj = {
-            title : req.params.movie
+            title : req.params.movie.replace(/\+/g, ' ')
         }
+        console.log(obj)
         movieSchema.postSchema.validate(obj, {abortEarly: false})
         .then(validRequest => {
             console.log("valid comment request for title: " + obj.title);
