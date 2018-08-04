@@ -26,33 +26,49 @@ module.exports = function(app, db) {
                 res.status(400).send();
             })
             .then(moviestring => {
-                moviestring = moviestring.replace(/\s/g, '+');
-                //omdb api call
-                console.log("apiaddr : " + apiaddress);
-                var url = apiaddress + '?t=' + moviestring + apikey;
-                console.log("GET " + url);
-                request(url).then( (data) => {
-                        var movie = {
-                            title : moviestring,
-                            data : data
+                //check if movie is in db
+                //var o_id = new ObjectId(moviestring.toLowerCase())
+                db.collection("movies").findOne(
+                        {
+                            _id: moviestring.toLowerCase()
                         }
-                        return movie
-                })
-                .then( movie => {
-                    //save data to database
-                    db.collection('movies').insert(movie, (err, res) => {
-                        if (err){
-                            console.log("adding movie to database failed")
-                            console.log(err)
-                        } else {
-                            console.log("addig movie to database success")
-                            res.status(202).send(movie);
-                        }
+                ).then( doc => {
+                    if(doc){
+                    console.log("found in db!");
+                    res.status(202).send(doc);
+                    } else {
+                    //not found in db, call external API
+                    console.log("Didn't found in db! : ");
+                    moviestring = moviestring.replace(/\s/g, '+');
+                    //omdb api call
+                    var url = apiaddress + '?t=' + moviestring + apikey;
+                    console.log("GET " + url);
+                    request(url).then( (data) => {
+                            var movie = {
+                                _id : moviestring.replace(/\+/g, ' ').toLowerCase(),
+                                data : data
+                            }
+                            return movie
+                    }).then( movie => {
+                        //save to db
+                        db.collection('movies').insert(movie, (err, res) => {
+                            if (err){
+                                console.log("adding movie to database failed")
+                                console.log(err)
+                            } else {
+                                console.log("adding movie to database success")
+                            }
+                        });
+                        res.status(200).send(movie);
+
                     })
                     }
+                }).catch( rejection => {
+                    console.log("rejection");
+                }
                 );
-            })
-    });
+            });              
+        });
     // fetches list of all movies already present in app database
     app.get('/movies', (req, res) => {
         var dbNotEmpty = True;
