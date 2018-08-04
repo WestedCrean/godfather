@@ -71,13 +71,13 @@ module.exports = function(app, db) {
         });
     // fetches list of all movies already present in app database
     app.get('/movies', (req, res) => {
-        var dbNotEmpty = True;
-        if(dbNotEmpty){
-            res.send("Hello!");
-            // + send info
-        } else {
-            res.status(404).send();
-        }
+        // BONUS: add additional filtering
+        db.collection("movies").find({}).toArray( (err, result) => {
+            if(err){
+                res.status(404).send();
+            }
+            res.status(202).send(result);
+        })
     });
     // saves comment to database and returns it,
     // body should contain movie already present in db and comment text
