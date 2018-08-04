@@ -2,7 +2,6 @@ const movieSchema = require('./validation/movies/schema.js');
 const commentSchema = require('./validation/comments/schema.js');
 const Joi = require('joi');
 const request = require('request-promise');
-const omdb = require('../../config/omdb.js');
 
 module.exports = function(app, db) {
     
@@ -25,19 +24,27 @@ module.exports = function(app, db) {
             .then(moviestring => {
                 moviestring = moviestring.replace(/\s/g, '+');
                 //omdb api call
-                var url = omdb.OMDB_APIADDRESS + '?t=' + moviestring + omdb.OMDB_APIKEYSTRING;
+                console.log("apiaddr : " + process.env.OMDB_APIADDRESS);
+                var url = process.env.OMDB_APIADDRESS + '?t=' + moviestring + process.env.OMDB_APIKEYSTRING;
                 console.log("GET " + url);
                 request(url).then( (data) => {
                         var movie = {
                             title : moviestring,
                             data : data
                         }
-                        res.status(202).send(movie)
-                        return data
+                        return movie
                 })
-                .then( data => {
+                .then( movie => {
                     //save data to database
-                    console.log("saving data...")
+                    db.collection('movies').insert(movie, (err, res) => {
+                        if (err){
+                            console.log("adding movie to database failed")
+                            console.log(err)
+                        } else {
+                            console.log("addig movie to database success")
+                            res.status(202).send(movie);
+                        }
+                    })
                     }
                 );
             })
