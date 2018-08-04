@@ -30,17 +30,22 @@ module.exports = function(app, db) {
                 var url = OMDB_APIADDRESS + '?t=' + moviestring + OMDB_APIKEYSTRING;
                 console.log("GET " + url);
                 request(url).then( (data) => {
-                        console.log(data);
-                        res.status(202).send(data);
-
-                });
+                        console.log(data)
+                        res.status(202).send(data)
+                        return data
+                })
+                .then( data => {
+                    //save data to database
+                    console.log("saving data...")
+                    }
+                );
             })
     });
     // fetches list of all movies already present in app database
     app.get('/movies', (req, res) => {
         var dbNotEmpty = True;
         if(dbNotEmpty){
-            res.status(200).send();
+            res.send("Hello!");
             // + send info
         } else {
             res.status(404).send();
