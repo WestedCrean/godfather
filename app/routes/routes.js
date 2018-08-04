@@ -41,14 +41,20 @@ module.exports = function(app, db) {
                     var url = apiaddress + '?t=' + moviestring + apikey;
                     console.log("GET " + url);
                     request(url).then( (data) => {
+                        if(data.response == "False") {
+                            // movie wasn't found in database
+                            res.status(404).send();
+                            console.log("Movie not Found!");
+                        }else{
                             var movie = {
                                 _id : moviestring.replace(/\+/g, ' ').toLowerCase(),
-                                data : data
+                                data : JSON.parse(data)
                             }
-                            return movie
+                            return movie;
+                        }
                     }).then( movie => {
                         //save to db
-                        db.collection('movies').insert(movie, (err, res) => {
+                        db.collection('movies').save(movie, (err, res) => {
                             if (err){
                                 console.log("adding movie to database failed")
                                 console.log(err)
@@ -82,9 +88,6 @@ module.exports = function(app, db) {
     *                      body should contain movie already present in db and comment text
     *  */
     app.post('/comments', (req, res) => {
-        console.log("POST comment body : "); 
-        console.log("title : " + req.body.title);
-        console.log("comment : " + req.body.comment);
 
         commentSchema.postSchema.validate(req.body, {abortEarly: false})
         .then(validRequest => {
@@ -100,6 +103,7 @@ module.exports = function(app, db) {
                 _id: commentRecord.title.toLowerCase()
             }).then( movie => {
                 if(movie){
+                    
                     //add comment to db
                     db.collection("comments").insert(commentRecord
                         , (err, result) => {
@@ -119,7 +123,9 @@ module.exports = function(app, db) {
         })
 
     });
-    // get all comments
+    /*
+    *   GET /comments - get all comments
+    */ 
     app.get('/comments', (req, res) => {
         db.collection("comments").find({}).toArray( (err, result) => {
             if(err){
@@ -127,6 +133,32 @@ module.exports = function(app, db) {
             }
             res.status(202).send(result);
         });
+    });
+    /*
+    *   GET /comments - get comments with filtering
+    */ 
+    app.get('/comments/:movie', (req, res) => {
+        console.log("comments with filtering!");
+        let obj = {
+            title : req.params.movie
+        }
+        movieSchema.postSchema.validate(obj, {abortEarly: false})
+        .then(validRequest => {
+            console.log("valid comment request for title: " + obj.title);
+            return obj;
+        }).catch(validationError => {
+            res.status(400).send(validationError.details);
+        }).then(obj => {
+            db.collection("comments").find({
+                title: obj.title
+            }).toArray( (err, result) => {
+                if(err){
+                    res.status(404).send();
+                }
+                console.log(result);
+                res.status(202).send(result);
+            });
+        })
     });
 
 };
