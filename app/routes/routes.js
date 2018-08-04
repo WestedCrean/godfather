@@ -2,18 +2,24 @@ const movieSchema = require('./validation/movies/schema.js');
 const commentSchema = require('./validation/comments/schema.js');
 const Joi = require('joi');
 const request = require('request-promise');
+const path = require('path');
 
 const apiaddress = process.env.OMDB_APIADDRESS;
 const apikey = process.env.OMDB_APIKEYSTRING
 const dbURL = process.env.MONGODB_URI;
 
 module.exports = function(app, db) {
-    
+   
+    /*
+    *   GET index - info about api
+    */ 
     app.get('/', (req, res) => {
-        res.status(202).send("Welcome to my API!");
+        res.status(202).sendFile(path.join(__dirname, '../interface/index.html'));
     });
-    // fetches more info for a given movie, and saves it into app database
-    app.post('/movies', (req, res) => {
+    /*
+    *   POST /movies - fetches info from omdb api and saves to db
+    */     
+   app.post('/movies', (req, res) => {
         console.log("POST request body : " + req.body.title)
         movieSchema.postSchema.validate(req.body, {abortEarly: false})
             .then(validRequest => {
@@ -24,7 +30,6 @@ module.exports = function(app, db) {
             })
             .then(moviestring => {
                 //check if movie is in db
-                //var o_id = new ObjectId(moviestring.toLowerCase())
                 db.collection("movies").findOne(
                         {
                             _id: moviestring.toLowerCase()
@@ -83,6 +88,43 @@ module.exports = function(app, db) {
         });
     });
 
+    // fetches list of all movies already present in app database
+    app.get('/movies/:sort', (req, res) => {
+        // BONUS: add additional filtering
+        // :sort can have values: byyear || bycountry || byrating  || byboxoffice
+        movieSchema.getSchema.validate(req.body.params, {abortEarly: false})
+        .then(validRequest => {
+            const sort = req.body.params;
+            return sort;
+        }).catch(validationError => {
+            res.status(400).send(validationError.details);
+        }).then(sort => {
+            switch(sort){
+                case byyear:
+                    sort = "Year";
+                    break;
+                case bycountry:
+                    sort = "Country";
+                    break;
+                case byrating:
+                    sort = "Ratings";
+                    break;
+                case byboxoffice:
+                    sort = "BoxOffice"
+                    break;
+            }
+            db.collection("comments").find({}).sort({ [sort]: 1 }).toArray( (err, result) => {
+                if(err){
+                    res.status(404).send();
+                }
+                res.status(202).send(result);
+            });
+            
+
+        })
+    });
+
+       
     /*  
     *   POST /comments  -  saves comment to database and returns it, 
     *                      body should contain movie already present in db and comment text

@@ -5,6 +5,6 @@ module.exports = {
         title: Joi.string().max(100).trim().min(1).required()
     }),
     getSchema: Joi.object().keys({
-        title: Joi.string().max(100).trim().min(1)
+        sort: Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)
     })
 }
