@@ -9,6 +9,8 @@ module.exports = function(app, db) {
     
     // fetches more info for a given movie, and saves it into app database
     app.post('/movies', (req, res) => {
+        const dbURL = process.env.MONGODB_URI;
+        console.log("mongodb: " + dbURL);
         console.log("POST request body : " + req.body.title)
         movieSchema.postMovies.validate(req.body, {abortEarly: false})
             .then(validRequest => {

@@ -1,12 +1,13 @@
 const express        = require('express');
 const MongoClient    = require('mongodb').MongoClient;
 const bodyParser     = require('body-parser');
-
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 8080;
 const dbURL = process.env.MONGODB_URI;
+console.log("mongodb: " + dbURL);
+
 app.use(bodyParser.urlencoded({extended: true}));
 
 MongoClient.connect(dbURL, (err, database) => {
