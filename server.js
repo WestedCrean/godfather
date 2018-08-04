@@ -15,7 +15,7 @@ MongoClient.connect(dbURL, (err, database) => {
         console.log(err);
         return;
     }
-    db = database.db("godfather");
+    db = database.db('heroku_k5rq766p');
     require('./app/routes')(app, db);
 
     app.listen(port , () => {
