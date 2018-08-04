@@ -2,9 +2,7 @@ const movieSchema = require('./validation/movies/schema.js');
 const commentSchema = require('./validation/comments/schema.js');
 const Joi = require('joi');
 const request = require('request-promise');
-
-const OMDB_APIADDRESS = 'http://www.omdbapi.com/';
-const OMDB_APIKEYSTRING = '&apikey=ca4f39b1';
+const omdb = require('../../config/omdb.js');
 
 module.exports = function(app, db) {
     
@@ -25,13 +23,16 @@ module.exports = function(app, db) {
                 res.status(400).send();
             })
             .then(moviestring => {
-                moviestring = moviestring.replace(' ', '+');
+                moviestring = moviestring.replace(/\s/g, '+');
                 //omdb api call
-                var url = OMDB_APIADDRESS + '?t=' + moviestring + OMDB_APIKEYSTRING;
+                var url = omdb.OMDB_APIADDRESS + '?t=' + moviestring + omdb.OMDB_APIKEYSTRING;
                 console.log("GET " + url);
                 request(url).then( (data) => {
-                        console.log(data)
-                        res.status(202).send(data)
+                        var movie = {
+                            title : moviestring,
+                            data : data
+                        }
+                        res.status(202).send(movie)
                         return data
                 })
                 .then( data => {
