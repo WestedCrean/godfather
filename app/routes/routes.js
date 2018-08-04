@@ -5,6 +5,8 @@ const request = require('request-promise');
 
 const apiaddress = process.env.OMDB_APIADDRESS;
 const apikey = process.env.OMDB_APIKEYSTRING
+const dbURL = process.env.MONGODB_URI;
+
 module.exports = function(app, db) {
     
     app.get('/', (req, res) => {
@@ -12,21 +14,13 @@ module.exports = function(app, db) {
     });
     // fetches more info for a given movie, and saves it into app database
     app.post('/movies', (req, res) => {
-        const dbURL = process.env.MONGODB_URI;
-        console.log("mongodb: " + dbURL);
         console.log("POST request body : " + req.body.title)
-        movieSchema.postMovies.validate(req.body, {abortEarly: false})
+        movieSchema.postSchema.validate(req.body, {abortEarly: false})
             .then(validRequest => {
-                console.log("Valid request!");
-                
                 const moviestring = req.body.title;
-                console.log(moviestring);
                 return moviestring;
             }).catch(validationError => {
-                console.log("Invalid request!")
-
-                //const err = validationError.details.map(d => d.message);
-                res.status(400).send();
+                res.status(400).send(validationError.details);
             })
             .then(moviestring => {
                 //check if movie is in db
@@ -80,16 +74,59 @@ module.exports = function(app, db) {
                 res.status(404).send();
             }
             res.status(202).send(result);
-        })
+        });
     });
-    // saves comment to database and returns it,
-    // body should contain movie already present in db and comment text
+
+    /*  
+    *   POST /comments  -  saves comment to database and returns it, 
+    *                      body should contain movie already present in db and comment text
+    *  */
     app.post('/comments', (req, res) => {
+        console.log("POST comment body : "); 
+        console.log("title : " + req.body.title);
+        console.log("comment : " + req.body.comment);
+
+        commentSchema.postSchema.validate(req.body, {abortEarly: false})
+        .then(validRequest => {
+            let commentRecord = {
+                title : req.body.title,
+                comment : req.body.comment
+            }
+            return commentRecord;
+        }).catch(validationError => {
+            res.status(400).send(validationError.details);
+        }).then( commentRecord => {
+            db.collection("movies").findOne({
+                _id: commentRecord.title.toLowerCase()
+            }).then( movie => {
+                if(movie){
+                    //add comment to db
+                    db.collection("comments").insert(commentRecord
+                        , (err, result) => {
+                            if (err){
+                                console.log("adding comment to database failed")
+                                console.log(err)
+                                res.status(404).send();
+                            } else {
+                                console.log("adding comment to database success")
+                                res.status(202).send(commentRecord);
+                            }
+                        });
+                } else {
+                    res.status(400).send();
+                }
+            })
+        })
 
     });
     // get all comments
     app.get('/comments', (req, res) => {
-
+        db.collection("comments").find({}).toArray( (err, result) => {
+            if(err){
+                res.status(404).send();
+            }
+            res.status(202).send(result);
+        });
     });
 
 };
