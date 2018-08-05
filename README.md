@@ -13,11 +13,11 @@ Clone repository, run npm install and fill in environment variables:
 # 🎯 Endpoints
 App has 4 endpoints:
 
-``` POST /movies ```
+1. ``` POST /movies ```
 
 Given a request with movie title in body, fetches info about it from OMDB API and saves it to database
 
-``` GET /movies/:filter(optional)/:sortby(optional) ```
+2. ``` GET /movies/:filter(optional)/:sortby(optional) ```
 
 Returns all movies from database, optionally it can be called with parameters for filtering and/or sorting
 
@@ -27,11 +27,11 @@ Filtering:
 Sorting:
     As last parameter pass one of values: byyear|bycountry|byrating|byboxoffice
 
-``` POST /comments ```
+3. ``` POST /comments ```
 
 Given a request with 'title' and 'comment' fields, posts a comment to database
 
-``` GET /comments/:movie(optional) ```
+4. ``` GET /comments/:movie(optional) ```
 
 Returns all comments about movie passed as parameter (and all movies by default)
 
