@@ -8,11 +8,17 @@ Clone repository, run
 ```
     npm install
 ```
- and fill in environment variables to .env file:
+ fill in environment variables to .env file
 ``` 
     OMDB_APIKEYSTRING=&apikey=<your-api-key>
     MONGODB_URI=<your-mongodb-uri>
 ```
+and run
+```
+    npm start
+```
+
+I recommend Postman for checking how API works
 
 # 🎯 Endpoints
 App has 4 endpoints:
@@ -45,12 +51,12 @@ App is based on Node with Express.js and MongoDB as database
 
 
 Joi - for request validation
-``` getSchema: Joi.object().keys({
-        sort: Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)
-    })
+``` 
+getSchema: Joi.object().keys({
+        sort: Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)})
 
 ```
-Request-promise - for Promise-based requests to OMDB API
+Request-promise - for Promise-based requests to OMDB API - Request module normally uses callbacks and I 
 
 ```
 request(url).then( (data) => {
