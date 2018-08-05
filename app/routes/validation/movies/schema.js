@@ -5,6 +5,9 @@ module.exports = {
         title: Joi.string().max(100).trim().min(1).required()
     }),
     getSchema: Joi.object().keys({
-        params:  Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)   
+        sort:  Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)   
+    }),
+    getSchemaWithFilter: Joi.object().keys({
+        filter: Joi.string().trim().regex(/country=[A-Za-z]+/)
     })
 }

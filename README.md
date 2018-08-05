@@ -27,15 +27,17 @@ App has 4 endpoints:
 
 Given a request with movie title in body, fetches info about it from OMDB API and saves it to database
 
-2. ``` GET /movies/:filter(optional)/:sortby(optional) ```
+2. ``` GET /movies/:sortby(optional) ```
 
-Returns all movies from database, optionally it can be called with parameters for filtering and/or sorting
-
-Filtering:
-    As parameter pass 'key=value', ex:  GET/movies/country=usa
+Returns all movies from database, optionally with sorting
 
 Sorting:
-    As last parameter pass one of values: byyear|bycountry|byrating|byboxoffice
+    As last parameter pass one of these values: byyear|bycountry|byrating|byboxoffice
+
+``` GET /movies/f/:filter ```
+
+Returns filtered movies from database - as :filter parameter pass 'key=value' pair,  GET/movies/country=usa
+Possible filters: country=<country>
 
 3. ``` POST /comments ```
 
@@ -56,7 +58,7 @@ getSchema: Joi.object().keys({
         sort: Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)})
 
 ```
-Request-promise - for Promise-based requests to OMDB API - Request module normally uses callbacks and I 
+Request-promise - for Promise-based requests to OMDB API - Request module normally uses callbacks but promises work much better for rest api and processing fetched data.
 
 ```
 request(url).then( (data) => {
@@ -73,3 +75,4 @@ request(url).then( (data) => {
                         }
                     }).
 ```
+

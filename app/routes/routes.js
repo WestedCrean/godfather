@@ -99,25 +99,20 @@ module.exports = function(app, db) {
                 );
             });              
         });
-    // fetches list of all movies already present in app database
-    app.get('/movies', (req, res) => {
-        // BONUS: add additional filtering
-        db.collection("movies").find({}).toArray( (err, result) => {
-            if(err){
-                res.status(404).send();
-            }
-            res.status(202).send(result);
-        });
-    });
 
-    // fetches list of all movies already present in app database
-    app.get('/movies/:sort', (req, res) => {
+    
+    /*
+    *   GET /movies - fetches list of all movies already present in app database, optionally sorted
+    */ 
+
+    app.get('/movies/:sort?', (req, res) => {
+        if(req.params.sort){
         // BONUS: add additional filtering
         // :sort can have values: byyear || bycountry || byrating  || byboxoffice
-        // joi takes in objects so let's make an object from :sort param
-        var param = {};
-        param["params"] = req.params.sort
-        movieSchema.getSchema.validate(param, {abortEarly: false})
+        let obj = {
+            sort : req.params.sort
+        }
+        movieSchema.getSchema.validate(obj, {abortEarly: false})
         .then(validRequest => {
             let sort = req.params.sort;
 
@@ -152,6 +147,40 @@ module.exports = function(app, db) {
             
 
         })
+    } else {
+        db.collection("movies").find({}).toArray( (err, result) => {
+            if(err){
+                res.status(404).send();
+            }
+            res.status(202).send(result);
+        });
+    }
+    });
+
+    // same endpoint but with filtering and sorting
+    app.get('/movies/f/:filter', (req, res) => {
+            let obj = {
+                filter: req.params.filter,
+            }
+            movieSchema.getSchemaWithFilter.validate(obj, {abortEarly: false})
+            .catch(err => {
+                console.log(err)
+            })
+            .then(validRequest => {
+                let filter = req.params.filter;
+                return filter;
+            }).catch(validationError => {
+                res.status(400).send(validationError.details);
+            }).then( filter => {
+
+            filter = filter.replace(/(.*)\=/, '');
+            db.collection("movies").find({ "data.Country" : filter }).toArray( (err, result) => {
+                if(err){
+                    res.status(404).send();
+                }
+                res.status(202).send(result);
+            });
+        });
     });
 
        

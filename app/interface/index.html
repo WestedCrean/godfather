@@ -10,15 +10,19 @@
 
         <h3>1. POST /movies </h3>
 <span>Given a request with movie title in body, fetches info about it from OMDB API and saves it to database</span>
-        <h3>2. GET /movies/:filter(optional)/:sortby(optional)</h3>
+        <h3>2. GET /movies/:sortby(optional)</h3>
 
-<span>Returns all movies from database, optionally it can be called with parameters for filtering and/or sorting<br /><br />
-Filtering:<br />
-    As parameter pass 'key=value', ex:  GET/movies/country=usa<br /><br />
+<span>Returns all movies from database, optionally with sorting:<br />
 
-Sorting:<br />
-    As last parameter pass one of values: byyear|bycountry|byrating|byboxoffice
-        </span>
+    Sorting:<br />
+        As last parameter pass one of these values: byyear|bycountry|byrating|byboxoffice:<br />
+    
+    <h3>GET /movies/f/:filter</h3>
+    
+    Returns filtered movies from database - as :filter parameter pass 'key=value' pair,  GET/movies/country=usa:<br />
+    Available filters: :<br />
+        country='yourcountry'
+    </span>
         <h3>3. POST /comments </h3>
 
 <span>Given a request with 'title' and 'comment' fields, posts a comment to database</span>
