@@ -64,10 +64,22 @@ module.exports = function(app, db) {
                                 _id : responseinfo["Title"],
                                 data : _objectWithoutProperties(responseinfo, ["Title"])
                             }
+                            // parsing data from string to int for later (sorting, filtering)
+                            movie.data.Year = parseInt(movie.data.Year);
+                            movie.data.imdbRating = parseFloat(movie.data.imdbRating)
+                            if(movie.data.Runtime !== "N/A"){
+                                movie.data.Runtime = parseInt(movie.data.Runtime.split(" ")[0]);
+                            }
+                            if(movie.data.BoxOffice !== "N/A"){
+                                movie.data.BoxOffice = parseInt(movie.data.BoxOffice.replace(/[^0-9]/g, ''));
+                            }
+
+
                             return movie;
                         }
                     }).then( movie => {
-                        //save to db
+                        if(movie){
+                            //save to db
                         db.collection('movies').save(movie, (err, res) => {
                             if (err){
                                 console.log("adding movie to database failed")
@@ -76,6 +88,7 @@ module.exports = function(app, db) {
                                 console.log("adding movie to database success")
                             }
                         });
+                        }
                         res.status(200).send(movie);
 
                     })
@@ -101,10 +114,13 @@ module.exports = function(app, db) {
     app.get('/movies/:sort', (req, res) => {
         // BONUS: add additional filtering
         // :sort can have values: byyear || bycountry || byrating  || byboxoffice
-        movieSchema.getSchema.validate(req.body.params, {abortEarly: false})
+        // joi takes in objects so let's make an object from :sort param
+        var param = {};
+        param["params"] = req.params.sort
+        movieSchema.getSchema.validate(param, {abortEarly: false})
         .then(validRequest => {
-            const sort = req.body.params;
-            
+            let sort = req.params.sort;
+
             return sort;
         }).catch(validationError => {
             res.status(400).send(validationError.details);
@@ -117,13 +133,17 @@ module.exports = function(app, db) {
                     sort = "Country";
                     break;
                 case 'byrating':
-                    sort = "Ratings";
+                    sort = "imdbRating";
                     break;
                 case 'byboxoffice':
                     sort = "BoxOffice"
                     break;
             }
-            db.collection("movies").find({}).sort({ [sort]: 1 }).toArray( (err, result) => {
+            // using variables in sorting
+            let s = "data." + sort;
+            let obj = {}
+            obj[s] = -1
+            db.collection("movies").find().sort(obj).toArray( (err, result) => {
                 if(err){
                     res.status(404).send();
                 }
