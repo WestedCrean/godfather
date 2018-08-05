@@ -35,7 +35,7 @@ Sorting:
 ``` GET /movies/filter/:filter/:sortby(optional) ```
 
 More sophisticated version of endpoint above, returns filtered movies from database 
-- as :filter parameter pass 'key=value' pair
+    as :filter parameter pass 'key=value' pair
 
 Ex: /movies/filter/country=usa , /movies/filter/year=2006/byboxoffice
 
@@ -58,7 +58,7 @@ Returns all comments about movie passed as parameter (and all movies by default)
 
 App is based on Node with Express.js and MongoDB as database
 
-Joi - request validation 
+Joi - for schemas for
 ``` 
 getSchema: Joi.object().keys({
         sort: Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)})
