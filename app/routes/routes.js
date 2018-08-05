@@ -216,7 +216,8 @@ module.exports = function(app, db) {
                 } else {
                     filterObj[key] = new RegExp(filter, "i")
                 }
-                
+                console.log("filter obj : ");
+                console.log(filterObj);
 
                 db.collection("movies").find(filterObj).sort(sortObj).toArray( (err, result) => {
                     if(err){

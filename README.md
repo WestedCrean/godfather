@@ -1,7 +1,8 @@
 # 🌹 godfather - Node.js REST API for movies database
 
-Installation: Clone repository, run 
+Installation: 
 ```
+    git clone https://github.com/WestedCrean/godfather.git
     npm install
 ```
  save environment variables to .env file
@@ -9,12 +10,12 @@ Installation: Clone repository, run
     OMDB_APIKEYSTRING=&apikey=<your-api-key>
     MONGODB_URI=<your-mongodb-uri>
 ```
-and run
+and to run server
 ```
     npm start
 ```
 
-I recommend Postman for checking how API works
+I recommend Postman for making api requests and checking how it works
 
 # 🎯 Endpoints
 App has 4 endpoints:
@@ -33,14 +34,17 @@ Sorting:
 
 ``` GET /movies/filter/:filter/:sortby(optional) ```
 
-Returns filtered movies from database - as :filter parameter pass 'key=value' pair
+More sophisticated version of endpoint above, returns filtered movies from database 
+- as :filter parameter pass 'key=value' pair
 
 Ex: /movies/filter/country=usa , /movies/filter/year=2006/byboxoffice
 
-Any field can be filtered, but due to nature of OMDB movie info, I recommend filtering only these fields:
+Although any field can be filtered, but due to the nature of OMDB movie info, I recommend using only these fields:
 
 Filters:
-    country | year | 
+    country | year | language | boxoffice
+
+Currently filtering allows only for exact match!
 
 3. ``` POST /comments ```
 
