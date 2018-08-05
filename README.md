@@ -29,11 +29,18 @@ Returns all movies from database, optionally with sorting
 
 Sorting:
     As last parameter pass one of these values: byyear|bycountry|byrating|byboxoffice
+    Ex: /movies/bycountry
 
-``` GET /movies/f/:filter ```
+``` GET /movies/filter/:filter/:sortby(optional) ```
 
-Returns filtered movies from database - as :filter parameter pass 'key=value' pair,  GET/movies/country=usa
-Possible filters: country=<country>
+Returns filtered movies from database - as :filter parameter pass 'key=value' pair
+
+Ex: /movies/filter/country=usa , /movies/filter/year=2006/byboxoffice
+
+Any field can be filtered, but due to nature of OMDB movie info, I recommend filtering only these fields:
+
+Filters:
+    country | year | 
 
 3. ``` POST /comments ```
 
