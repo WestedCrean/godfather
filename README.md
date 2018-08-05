@@ -1,10 +1,6 @@
-# 🌹 godfather
+# 🌹 godfather - Node.js REST API for movies database
 
-Node.js REST API for movies database
-
-Installation:
-
-Clone repository, run 
+Installation: Clone repository, run 
 ```
     npm install
 ```
