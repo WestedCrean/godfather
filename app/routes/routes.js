@@ -32,7 +32,11 @@ module.exports = function(app, db) {
                 //check if movie is in db
                 db.collection("movies").findOne(
                         {
-                            _id: moviestring.toLowerCase()
+                            $or: [{
+                                _id: moviestring.toLowerCase()
+                            },{
+                                _id: new RegExp(moviestring, 'gi')
+                            }]
                         }
                 ).then( doc => {
                     if(doc){
@@ -46,14 +50,19 @@ module.exports = function(app, db) {
                     var url = apiaddress + '?t=' + moviestring + apikey;
                     console.log("GET " + url);
                     request(url).then( (data) => {
-                        if(data.response == "False") {
+                        let responseinfo = JSON.parse(data);
+                        if(responseinfo["Response"] == "False") {
                             // movie wasn't found in database
                             res.status(404).send();
                             console.log("Movie not Found!");
                         }else{
+
+                            // helper function from babel
+                            function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
                             var movie = {
-                                _id : moviestring.replace(/\+/g, ' ').toLowerCase(),
-                                data : JSON.parse(data)
+                                _id : responseinfo["Title"],
+                                data : _objectWithoutProperties(responseinfo, ["Title"])
                             }
                             return movie;
                         }
@@ -95,25 +104,26 @@ module.exports = function(app, db) {
         movieSchema.getSchema.validate(req.body.params, {abortEarly: false})
         .then(validRequest => {
             const sort = req.body.params;
+            
             return sort;
         }).catch(validationError => {
             res.status(400).send(validationError.details);
         }).then(sort => {
             switch(sort){
-                case byyear:
+                case 'byyear':
                     sort = "Year";
                     break;
-                case bycountry:
+                case 'bycountry':
                     sort = "Country";
                     break;
-                case byrating:
+                case 'byrating':
                     sort = "Ratings";
                     break;
-                case byboxoffice:
+                case 'byboxoffice':
                     sort = "BoxOffice"
                     break;
             }
-            db.collection("comments").find({}).sort({ [sort]: 1 }).toArray( (err, result) => {
+            db.collection("movies").find({}).sort({ [sort]: 1 }).toArray( (err, result) => {
                 if(err){
                     res.status(404).send();
                 }
