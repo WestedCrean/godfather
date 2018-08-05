@@ -4,7 +4,7 @@ const Joi = require('joi');
 const request = require('request-promise');
 const path = require('path');
 
-const apiaddress = process.env.OMDB_APIADDRESS;
+const apiaddress = 'http://www.omdbapi.com/';
 const apikey = process.env.OMDB_APIKEYSTRING
 const dbURL = process.env.MONGODB_URI;
 

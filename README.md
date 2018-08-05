@@ -4,10 +4,14 @@ Node.js REST API for movies database
 
 Installation:
 
-Clone repository, run npm install and fill in environment variables:
+Clone repository, run 
+```
+    npm install
+```
+ and fill in environment variables to .env file:
 ``` 
-    export OMDB_APIKEYSTRING=&apikey=<your-api-key>
-    export MONGODB_URI=<your-mongodb-uri>
+    OMDB_APIKEYSTRING=&apikey=<your-api-key>
+    MONGODB_URI=<your-mongodb-uri>
 ```
 
 # 🎯 Endpoints
