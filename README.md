@@ -44,7 +44,8 @@ Joi - for request validation
 ``` getSchema: Joi.object().keys({
         sort: Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)
     })
-     ```
+
+```
 Request-promise - for Promise-based requests to OMDB API
 
 ```
@@ -62,4 +63,3 @@ request(url).then( (data) => {
                         }
                     }).
 ```
-
