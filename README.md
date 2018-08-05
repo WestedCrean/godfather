@@ -51,14 +51,13 @@ Returns all comments about movie passed as parameter (and all movies by default)
 
 App is based on Node with Express.js and MongoDB as database
 
-
-Joi - for request validation
+Joi - request validation 
 ``` 
 getSchema: Joi.object().keys({
         sort: Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)})
 
 ```
-Request-promise - for Promise-based requests to OMDB API - Request module normally uses callbacks but promises work much better for rest api and processing fetched data.
+Request-promise - for Promise-based requests to OMDB API - Request module normally uses callbacks but promises are a much better solution for rest api and processing fetched data.
 
 ```
 request(url).then( (data) => {
