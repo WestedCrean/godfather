@@ -5,12 +5,12 @@ Installation:
     git clone https://github.com/WestedCrean/godfather.git
     npm install
 ```
- save environment variables to .env file
+, then save environment variables to .env file
 ``` 
     OMDB_APIKEYSTRING=&apikey=<your-api-key>
     MONGODB_URI=<your-mongodb-uri>
 ```
-and to run server
+and run your server locally
 ```
     npm start
 ```
