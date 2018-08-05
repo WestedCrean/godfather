@@ -49,7 +49,7 @@ module.exports = function(app, db) {
                     //omdb api call
                     var url = apiaddress + '?t=' + moviestring + apikey;
                     console.log("GET " + url);
-                    request(url).then( (data) => {
+                    request(url).then( data => {
                         let responseinfo = JSON.parse(data);
                         if(responseinfo["Response"] == "False") {
                             // movie wasn't found in database

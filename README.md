@@ -67,7 +67,7 @@ getSchema: Joi.object().keys({
 Request-promise - for Promise-based requests to OMDB API - Request module normally uses callbacks but promises are a much better solution for rest api and processing fetched data.
 
 ```
-request(url).then( (data) => {
+request(url).then( data => {
                         if(data.response == "False") {
                             // movie wasn't found in database
                             res.status(404).send();
