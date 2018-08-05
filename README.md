@@ -4,7 +4,7 @@ Installation: Clone repository, run
 ```
     npm install
 ```
- fill in environment variables to .env file
+ save environment variables to .env file
 ``` 
     OMDB_APIKEYSTRING=&apikey=<your-api-key>
     MONGODB_URI=<your-mongodb-uri>

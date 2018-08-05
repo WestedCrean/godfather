@@ -158,29 +158,73 @@ module.exports = function(app, db) {
     });
 
     // same endpoint but with filtering and sorting
-    app.get('/movies/f/:filter', (req, res) => {
-            let obj = {
-                filter: req.params.filter,
+    app.get('/movies/filter/:filter/:sort?', (req, res) => {
+        if(req.params.sort){
+            var obj = {
+                sort : req.params.sort,
+                filter: req.params.filter
             }
-            movieSchema.getSchemaWithFilter.validate(obj, {abortEarly: false})
-            .catch(err => {
-                console.log(err)
+        } else {
+            var obj = {
+                filter: req.params.filter
+            }
+        }
+            movieSchema.getSchema.validate(obj, {abortEarly: false})
+            .catch( err => {
+                console.log("request validation error catched");
             })
             .then(validRequest => {
-                let filter = req.params.filter;
-                return filter;
+                let obj = {
+                    sort: req.params.sort,
+                    filter: req.params.filter
+                }
+    
+                return obj;
             }).catch(validationError => {
                 res.status(400).send(validationError.details);
-            }).then( filter => {
-
-            filter = filter.replace(/(.*)\=/, '');
-            db.collection("movies").find({ "data.Country" : filter }).toArray( (err, result) => {
-                if(err){
-                    res.status(404).send();
+            }).then(obj => {
+                var filter = obj.filter;
+                if(obj.sort){
+                var sort = obj.sort;
+                switch(sort){
+                    case 'byyear':
+                        sort = "Year";
+                        break;
+                    case 'bycountry':
+                        sort = "Country";
+                        break;
+                    case 'byrating':
+                        sort = "imdbRating";
+                        break;
+                    case 'byboxoffice':
+                        sort = "BoxOffice"
+                        break;
                 }
-                res.status(202).send(result);
+                // using variables in sorting
+                var s = "data." + sort;
+                var sortObj = {}
+                sortObj[s] = -1
+            }
+                let key = filter.replace(/\=(.*)/, "");
+                key = key.charAt(0).toUpperCase() + key.slice(1);
+                key = "data." + key;
+                filter = filter.replace(/(.*)\=/, '');
+                let filterObj = {};
+                if(key == 'data.Year' || key == 'data.Runtime'){
+                    filter = parseInt(filter);
+                    filterObj[key] = filter;
+                } else {
+                    filterObj[key] = new RegExp(filter, "i")
+                }
+                
+
+                db.collection("movies").find(filterObj).sort(sortObj).toArray( (err, result) => {
+                    if(err){
+                        res.status(404).send();
+                    }
+                    res.status(202).send(result);
+                });
             });
-        });
     });
 
        
