@@ -6,8 +6,8 @@ Installation:
 
 Clone repository, run npm install and fill in environment variables:
 ``` 
-    export OMDB_APIKEYSTRING=&apikey=<yourapikey>
-    export MONGODB_URI=mongodb://heroku_k5rq766p:bilqv38cjjn2bnte8sgprift64@ds113402.mlab.com:13402/heroku_k5rq766p 
+    export OMDB_APIKEYSTRING=&apikey=<your-api-key>
+    export MONGODB_URI=<your-mongodb-uri>
 ```
 
 # 🎯 Endpoints
