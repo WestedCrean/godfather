@@ -67,7 +67,7 @@ getSchema: Joi.object().keys({
         sort: Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)})
 
 ```
-Request-promise - for Promise-based requests to OMDB API - Request module normally uses callbacks but promises are a much better solution for rest api and processing fetched data.
+Request-promise - Promise-based requests to OMDB API - Request module normally uses callbacks but promises are a much better solution for rest api and processing fetched data.
 
 ```
 request(url).then( data => {
@@ -84,4 +84,20 @@ request(url).then( data => {
                         }
                     }).
 ```
-Chai and Mocha - testing
+Mocha and Chai - testing environment
+
+```
+    describe('/POST movies', () => {
+    it('should fetch data about a movie from api', (done) => {
+      chai.request(host)
+          .post('/movies')
+          .set('content-type', 'application/x-www-form-urlencoded')
+          .send({title: movienotindb})
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.keys(['_id', 'data']);
+            done();
+          });
+    });
+```

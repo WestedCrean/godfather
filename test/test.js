@@ -61,7 +61,7 @@ describe('/POST movies', () => {
           .set('content-type', 'application/x-www-form-urlencoded')
           .send({title: movienotindb})
           .end((err, res) => {
-            res.should.have.status(200);
+            res.should.have.status(200,201);
             res.body.should.be.a('object');
             res.body.should.have.keys(['_id', 'data']);
             done();
