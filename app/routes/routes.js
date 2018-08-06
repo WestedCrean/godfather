@@ -1,5 +1,5 @@
-const movieSchema = require('./validation/movies/schema.js');
-const commentSchema = require('./validation/comments/schema.js');
+const movieSchema = require('./model/movies/schema.js');
+const commentSchema = require('./model/comments/schema.js');
 const Joi = require('joi');
 const request = require('request-promise');
 const path = require('path');
@@ -14,7 +14,7 @@ module.exports = function(app, db) {
     *   GET index - info about api
     */ 
     app.get('/', (req, res) => {
-        res.status(202).sendFile(path.join(__dirname, '../interface/index.html'));
+        res.status(200).sendFile(path.join(__dirname, '../interface/index.html'));
     });
     /*
     *   POST /movies - fetches info from omdb api and saves to db
@@ -41,7 +41,7 @@ module.exports = function(app, db) {
                 ).then( doc => {
                     if(doc){
                     console.log("found in db!");
-                    res.status(202).send(doc);
+                    res.status(200).send(doc);
                     } else {
                     //not found in db, call external API
                     console.log("Didn't found in db! : ");
@@ -67,10 +67,10 @@ module.exports = function(app, db) {
                             // parsing data from string to int for later (sorting, filtering)
                             movie.data.Year = parseInt(movie.data.Year);
                             movie.data.imdbRating = parseFloat(movie.data.imdbRating)
-                            if(movie.data.Runtime !== "N/A"){
+                            if(movie.data.Runtime && movie.data.Runtime !== "N/A"){
                                 movie.data.Runtime = parseInt(movie.data.Runtime.split(" ")[0]);
                             }
-                            if(movie.data.BoxOffice !== "N/A"){
+                            if(movie.data.BoxOffice && movie.data.BoxOffice  !== "N/A"){
                                 movie.data.BoxOffice = parseInt(movie.data.BoxOffice.replace(/[^0-9]/g, ''));
                             }
 
@@ -88,13 +88,14 @@ module.exports = function(app, db) {
                                 console.log("adding movie to database success")
                             }
                         });
+                        res.status(201).send(movie);
                         }
-                        res.status(200).send(movie);
-
                     })
                     }
                 }).catch( rejection => {
                     console.log("rejection");
+                    res.status(404).send();
+
                 }
                 );
             });              
@@ -142,7 +143,7 @@ module.exports = function(app, db) {
                 if(err){
                     res.status(404).send();
                 }
-                res.status(202).send(result);
+                res.status(200).send(result);
             });
             
 
@@ -152,7 +153,7 @@ module.exports = function(app, db) {
             if(err){
                 res.status(404).send();
             }
-            res.status(202).send(result);
+            res.status(200).send(result);
         });
     }
     });
@@ -223,7 +224,7 @@ module.exports = function(app, db) {
                     if(err){
                         res.status(404).send();
                     }
-                    res.status(202).send(result);
+                    res.status(200).send(result);
                 });
             });
     });
@@ -237,6 +238,7 @@ module.exports = function(app, db) {
 
         commentSchema.postSchema.validate(req.body, {abortEarly: false})
         .then(validRequest => {
+            console.log("Valid comment!");
             let commentRecord = {
                 title : req.body.title,
                 comment : req.body.comment
@@ -245,11 +247,12 @@ module.exports = function(app, db) {
         }).catch(validationError => {
             res.status(400).send(validationError.details);
         }).then( commentRecord => {
+            console.log("Finding movie: " + commentRecord.title);
             db.collection("movies").findOne({
-                _id: commentRecord.title.toLowerCase()
+                _id: new RegExp(commentRecord.title, "gi")
             }).then( movie => {
                 if(movie){
-
+                    console.log("Found movie");
                     //add comment to db
                     db.collection("comments").insert(commentRecord
                         , (err, result) => {
@@ -259,11 +262,12 @@ module.exports = function(app, db) {
                                 res.status(404).send();
                             } else {
                                 console.log("adding comment to database success")
-                                res.status(202).send(commentRecord);
+                                res.status(201).send(commentRecord);
                             }
                         });
                 } else {
-                    res.status(400).send();
+                    console.log("Movie not found in database");
+                    res.status(400).send("Movie not found in database");
                 }
             })
         })
@@ -277,7 +281,7 @@ module.exports = function(app, db) {
             if(err){
                 res.status(404).send();
             }
-            res.status(202).send(result);
+            res.status(200).send(result);
         });
     });
     /*
@@ -302,7 +306,7 @@ module.exports = function(app, db) {
                     res.status(404).send();
                 }
                 console.log(result);
-                res.status(202).send(result);
+                res.status(200).send(result);
             });
         })
     });

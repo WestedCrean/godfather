@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Node.js REST API for movie database",
   "main": "server.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha --timeout 10000"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/WestedCrean/godfather.git"
@@ -31,11 +33,9 @@
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
     "eslint": "^5.2.0",
     "mocha": "^5.2.0"
-  },
-    "scipts": {
-      "test": "mocha --timeout 10000"
-
-    }
+  }
 }

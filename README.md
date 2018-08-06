@@ -58,7 +58,7 @@ Returns all comments about movie passed as parameter (and all movies by default)
 
 App is based on Node with Express.js and MongoDB as database
 
-Joi - for schemas for
+Joi - request validation
 ``` 
 getSchema: Joi.object().keys({
         sort: Joi.string().trim().regex(/byyear|bycountry|byrating|byboxoffice/gm)})
@@ -81,4 +81,4 @@ request(url).then( data => {
                         }
                     }).
 ```
-
+Chai and Mocha - testing
