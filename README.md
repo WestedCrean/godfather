@@ -19,8 +19,12 @@ I recommend Postman for making api requests but in /test/test.js you can play ar
 ```
     npm test
 ```
+![chai-tests](https://github.com/WestedCrean/godfather/blob/master/godfatherscreenshot.jpg?raw=true)
 
 # 🎯 Endpoints
+
+![json-postman](https://github.com/WestedCrean/godfather/blob/master/postmanscreenshot.jpg?raw=true)
+
 App has 4 endpoints:
 
 1. ``` POST /movies ```
@@ -29,7 +33,7 @@ Given a request with movie title in body, fetches info about it from OMDB API an
 
 2. ``` GET /movies/:sortby(optional) ```
 
-Returns all movies from database, optionally with sorting
+Returns all movies from database, with optional sorting
 
 Sorting:
     As last parameter pass one of these values: byyear|bycountry|byrating|byboxoffice
