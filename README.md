@@ -15,7 +15,10 @@ and run your server locally
     npm start
 ```
 
-I recommend Postman for making api requests and checking how it works
+I recommend Postman for making api requests but in /test/test.js you can play around with mocha/chai tests:
+```
+    npm test
+```
 
 # 🎯 Endpoints
 App has 4 endpoints:
