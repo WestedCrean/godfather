@@ -30,6 +30,12 @@ App has 4 endpoints:
 1. ``` POST /movies ```
 
 Given a request with movie title in body, fetches info about it from OMDB API and saves it to database
+```
+    // Request format:
+    {
+        "title": "Godfather"
+    }
+```
 
 2. ``` GET /movies/:sortby(optional) ```
 
@@ -56,6 +62,14 @@ Currently filtering allows only for exact match!
 3. ``` POST /comments ```
 
 Given a request with 'title' and 'comment' fields, posts a comment to database
+
+```
+    // Request format:
+    {
+        "title": "Godfather",
+        "comment": "Great!"
+    }
+```
 
 4. ``` GET /comments/:movie(optional) ```
 
